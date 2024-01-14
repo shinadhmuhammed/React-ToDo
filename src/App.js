@@ -1,15 +1,17 @@
 import "./App.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [todo, todoState] = useState("");
-
+  const [errorMessage,setErrorMessage]=useState("")
+  const inputRef=useRef(null)
+  
 
   const deleteToDo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
-
+  
 
   const handleCheckboxChange = (id, checked) => {
     setTodos(
@@ -23,6 +25,10 @@ function App() {
     const trimmedTodo=todo.trim()
     if(trimmedTodo !== ""){
       setTodos([...todos,{id:Date.now(),text:trimmedTodo,status:false}])
+      todoState("")
+      setErrorMessage("")
+    }else{
+      setErrorMessage('please enter your todo list')
     }
   }
 
@@ -44,7 +50,7 @@ function App() {
       <div className="input">
         <input
           value={todo}
-          onChange={(event) => todoState(event.target.value)}
+          onChange={(event) => todoState(event.target.value)} ref={inputRef}
           type="text"
           placeholder="🖊️ Add item..."
         />
@@ -52,6 +58,7 @@ function App() {
        <i onClick={handleAdd}
        className="fas fa-plus"></i>
       </div>
+      {errorMessage && <p style={{color:"red"}}>{errorMessage}</p>}
 
       <div className="todos">
         {todos.map((value) => (
