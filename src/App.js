@@ -1,17 +1,14 @@
 import "./App.css";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [todo, todoState] = useState("");
-  const [errorMessage,setErrorMessage]=useState("")
-  const inputRef=useRef(null)
-  
+  const [errorMessage, setErrorMessage] = useState("");
 
   const deleteToDo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
-  
 
   const handleCheckboxChange = (id, checked) => {
     setTodos(
@@ -21,21 +18,23 @@ function App() {
     );
   };
 
-  const handleAdd=()=>{
-    const trimmedTodo=todo.trim()
-    if(trimmedTodo !== ""){
-      setTodos([...todos,{id:Date.now(),text:trimmedTodo,status:false}])
-      todoState("")
-      setErrorMessage("")
-    }else{
-      setErrorMessage('please enter your todo list')
+  const handleAdd = () => {
+    const trimmedTodo = todo.trim();
+    if (trimmedTodo !== "") {
+      setTodos([
+        ...todos,
+        { id: Date.now(), text: trimmedTodo, status: false },
+      ]);
+      todoState("");
+      setErrorMessage("");
+    } else {
+      setErrorMessage("please enter your todo list");
     }
-  }
+  };
 
   const today = new Date();
-  const options = { weekday: 'long' }; 
+  const options = { weekday: "long" };
   const formattedDay = today.toLocaleDateString(undefined, options);
-
 
   return (
     <div className="app">
@@ -50,15 +49,14 @@ function App() {
       <div className="input">
         <input
           value={todo}
-          onChange={(event) => todoState(event.target.value)} ref={inputRef}
+          onChange={(event) => todoState(event.target.value)}
           type="text"
           placeholder="🖊️ Add item..."
         />
-        
-       <i onClick={handleAdd}
-       className="fas fa-plus"></i>
+
+        <i onClick={handleAdd} className="fas fa-plus"></i>
       </div>
-      {errorMessage && <p style={{color:"red"}}>{errorMessage}</p>}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
       <div className="todos">
         {todos.map((value) => (
@@ -73,7 +71,11 @@ function App() {
                 name=""
                 id=""
               />
-               <p style={{ textDecoration: value.status ? "line-through" : "none" }}>
+              <p
+                style={{
+                  textDecoration: value.status ? "line-through" : "none",
+                }}
+              >
                 {value.text}
               </p>
             </div>
@@ -87,7 +89,6 @@ function App() {
           </div>
         ))}
       </div>
-
 
       {todos.map((value) => {
         if (value.status) {
