@@ -3,13 +3,17 @@ import { useState } from "react";
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [todo, todoState] = useState("");
+  const [todo, setTodo] = useState("");
+  const [editTodo, seteditTodo] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+
 
   const deleteToDo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+
+  
   const handleCheckboxChange = (id, checked) => {
     setTodos(
       todos.map((todo) =>
@@ -18,23 +22,65 @@ function App() {
     );
   };
 
+
+
+  const handleEdit = (id) => {
+    const todoToEdit = todos.find((todo) => todo.id === id);
+    if (todoToEdit) {
+      setTodo(todoToEdit.text);
+      seteditTodo(id);
+    }
+  };
+
+
+
+
+  const handleSaveEdit = () => {
+    const trimmedTodo = todo.trim();
+    if (trimmedTodo !== "") {
+      setTodos((prevTodos) =>
+        prevTodos.map((prevTodo) =>
+          prevTodo.id === editTodo
+            ? { ...prevTodo, text: trimmedTodo }
+            : prevTodo
+        )
+      );
+      setTodo("");
+      seteditTodo(null);
+      setErrorMessage("");
+    } else {
+      setErrorMessage("Please enter your todo list");
+    }
+  };
+
+
+
   const handleAdd = () => {
     const trimmedTodo = todo.trim();
     if (trimmedTodo !== "") {
-      setTodos([
-        ...todos,
-        { id: Date.now(), text: trimmedTodo, status: false },
-      ]);
-      todoState("");
-      setErrorMessage("");
+      const isDuplicate = todos.some((item) => item.text === trimmedTodo);
+
+      if (!isDuplicate) {
+        setTodos([
+          ...todos,
+          { id: Date.now(), text: trimmedTodo, status: false },
+        ]);
+        setTodo("");
+        setErrorMessage("");
+      } else {
+        setErrorMessage("Duplicate item. Please enter a unique todo.");
+      }
     } else {
-      setErrorMessage("please enter your todo list");
+      setErrorMessage("Please enter your todo list");
     }
   };
 
   const today = new Date();
   const options = { weekday: "long" };
   const formattedDay = today.toLocaleDateString(undefined, options);
+
+
+
 
   return (
     <div className="app">
@@ -49,14 +95,23 @@ function App() {
       <div className="input">
         <input
           value={todo}
-          onChange={(event) => todoState(event.target.value)}
+          onChange={(event) => setTodo(event.target.value)}
           type="text"
           placeholder="🖊️ Add item..."
         />
 
-        <i onClick={handleAdd} className="fas fa-plus"></i>
+
+
+        {editTodo === null ? (
+          <i onClick={handleAdd} className="fas fa-plus"></i>
+        ) : (
+          <i onClick={handleSaveEdit} className="fas fa-check"></i>
+        )}
       </div>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+
+
 
       <div className="todos">
         {todos.map((value) => (
@@ -80,7 +135,14 @@ function App() {
               </p>
             </div>
 
+
+
+
             <div className="right">
+              <i
+                onClick={() => handleEdit(value.id)}
+                className="fas fa-edit"
+              ></i>
               <i
                 onClick={() => deleteToDo(value.id)}
                 className="fas fa-times"
@@ -89,13 +151,6 @@ function App() {
           </div>
         ))}
       </div>
-
-      {todos.map((value) => {
-        if (value.status) {
-          return <h1 key={value.id}>{value.text}</h1>;
-        }
-        return null;
-      })}
     </div>
   );
 }
