@@ -134,11 +134,7 @@ function App() {
                 {value.text}
               </p>
             </div>
-
-
-
-
-            <div className="right">
+             <div className="right">
               <i
                 onClick={() => handleEdit(value.id)}
                 className="fas fa-edit"
